@@ -16,6 +16,9 @@ from openpyxl.utils import get_column_letter
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "src"))
 import market_model as M  # noqa: E402
+import diligence as D  # noqa: E402
+
+ACRE = D.ACRE_PER_HA
 
 OUT = ROOT / "model" / "india_agri_carbon_market.xlsx"
 
@@ -239,6 +242,81 @@ def main() -> int:
     put(ws, r + 1, 2, "Sow&Reap's 1.07 credits per farmer is the only bottom-up "
                       "check available on the credit-yield assumption -- and it "
                       "is credits per FARMER, not per hectare.", MUTED)
+
+    # ---- Diligence tracker -------------------------------------------------
+    ws = wb.create_sheet("Diligence tracker")
+    widths(ws, {1: 3, 2: 26, 3: 26, 4: 24, 5: 22, 6: 11, 7: 11, 8: 11,
+                9: 10, 10: 13, 11: 48, 12: 44})
+    put(ws, 2, 2, "Carbon project opportunity screen", TITLE)
+    put(ws, 3, 2, "Six publicly documented Indian programmes. Published figures "
+                  "only; 'n/d' is a gap, never a zero.", MUTED)
+    header(ws, 5, ["Programme", "Geography", "Pathway", "Registry / method",
+                   "Farmers", "Hectares", "Credits", "Share %", "Basis",
+                   "Commercial risk", "Next diligence question"])
+    r = 6
+    for p in D.ranked_by_disclosure():
+        reg = p.registry or "n/d"
+        if p.methodology:
+            reg += f" / {p.methodology}"
+        if p.project_id:
+            reg += f" (ID {p.project_id})"
+        put(ws, r, 2, p.name, BOLD)
+        put(ws, r, 3, p.geography, BLUE)
+        put(ws, r, 4, p.pathway, BLUE)
+        put(ws, r, 5, reg, BLUE)
+        for col, v, fmt in ((6, p.farmers, NUM), (7, p.hectares, NUM),
+                            (8, p.credits_issued, NUM),
+                            (9, p.farmer_share_pct, NUM)):
+            put(ws, r, col, v if v is not None else "n/d",
+                BLUE if v is not None else MUTED, fmt if v is not None else None)
+        put(ws, r, 10, p.share_basis or "n/d",
+            WARN if p.share_basis == "net" else MUTED)
+        put(ws, r, 11, p.commercial_risk, BLUE).alignment = Alignment(wrap_text=True)
+        put(ws, r, 12, p.next_question, BLUE).alignment = Alignment(wrap_text=True)
+        r += 1
+    last = r - 1
+
+    r += 1
+    put(ws, r, 2, "What the screen does to this model's assumptions", H2)
+    r += 1
+    header(ws, r, ["Assumption", "In the model", "Published low",
+                   "Published high", "Model inside range?"])
+    r += 1
+    put(ws, r, 2, "Farmer share of credit revenue", BOLD)
+    put(ws, r, 3, 1 - M.rice_methane().developer_share, BLUE, PCT)
+    put(ws, r, 4, f"=MIN(I6:I{last})/100", BLACK, PCT)
+    put(ws, r, 5, f"=MAX(I6:I{last})/100", BLACK, PCT)
+    put(ws, r, 6, f'=IF(AND(C{r}>=D{r},C{r}<=E{r}),"yes","NO")', WARN)
+    split_row = r
+
+    r += 1
+    put(ws, r, 2, "Credit yield, rice methane (t/ha/yr)", BOLD)
+    put(ws, r, 3, M.rice_methane().credit_yield, BLUE, T2)
+    put(ws, r, 4, f"=ROUND({D.VM0042_CREDITS_PER_ACRE[0]}*{ACRE},2)", BLACK, T2)
+    put(ws, r, 5, f"=ROUND({D.VM0042_CREDITS_PER_ACRE[1]}*{ACRE},2)", BLACK, T2)
+    put(ws, r, 6, f'=IF(AND(C{r}>=D{r},C{r}<=E{r}),"yes","NO")', WARN)
+    yield_row = r
+
+    r += 2
+    put(ws, r, 2, "Developer revenue here is OVERSTATED by", BOLD)
+    put(ws, r, 3, f"=1-(1-D{split_row})/(1-C{split_row})", BLACK, PCT)
+    put(ws, r, 4, f"=1-(1-E{split_row})/(1-C{split_row})", BLACK, PCT)
+    put(ws, r, 6, "on the revenue split", MUTED)
+    r += 1
+    put(ws, r, 2, "...and UNDERSTATED by", BOLD)
+    put(ws, r, 3, f"=D{yield_row}/C{yield_row}", BLACK, '0.0"x"')
+    put(ws, r, 6, "on the credit yield. They do not cancel.", MUTED)
+
+    r += 2
+    put(ws, r, 2, "The two conflicts point in opposite directions, so neither is "
+                  "a one-line fix. The split is a disclosure problem -- two of the "
+                  "three published shares are promised on undefined 'net' revenue. "
+                  "The yield is a measurement problem -- no disclosed Indian "
+                  "programme publishes both hectares and credits issued.", MUTED)
+    r += 2
+    put(ws, r, 2, "CCTS offset mechanism: agriculture is a Phase 1 sector, and a "
+                  f"project start date must be on or after {D.CCTS_EARLIEST_START} "
+                  "to be eligible.", MUTED)
 
     OUT.parent.mkdir(parents=True, exist_ok=True)
     wb.save(OUT)

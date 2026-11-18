@@ -4,7 +4,9 @@
 
 Built for a Varaha application.
 
-📊 **[Results](https://f20220970-debug.github.io/india-agri-carbon-market/)** · [Strategy memo](reports/strategy_memo.md) · [Workbook](model/india_agri_carbon_market.xlsx) · [Sources and assumptions](data/SOURCES.md)
+📊 **[Results](https://f20220970-debug.github.io/india-agri-carbon-market/)** · [Strategy memo](reports/strategy_memo.md) · [Diligence screen](reports/diligence_memo.md) · [Workbook](model/india_agri_carbon_market.xlsx) · [Sources and assumptions](data/SOURCES.md)
+
+> **Screening six real programmes broke two of this model's own assumptions.** Every operator that publishes a farmer revenue share promises **55–75%**, not the 50% assumed here — so developer revenue below is **overstated by 10–50%**. And the only published yield estimate, 1.5–1.7 credits per acre under VM0042, implies **3.71–4.20 t/ha** against the 1.1 assumed, understating it ~3.4×. They push in opposite directions, so neither is a one-line fix. See the [diligence screen](reports/diligence_memo.md).
 
 ---
 

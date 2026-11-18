@@ -51,3 +51,21 @@ Retrieved 18 November 2026.
 - **Land tenure.** Registries generally require clear land-use rights, and
   leased land creates uncertainty over who receives proceeds. This is a real
   constraint on enrolment that no spreadsheet captures.
+
+## Diligence screen — facts
+
+Used in [`src/diligence.py`](../src/diligence.py) and [the screening memo](../reports/diligence_memo.md). Published figures only; a blank in the tracker means "not disclosed", never zero.
+
+| Fact | Figure | Source |
+| --- | --- | --- |
+| Varaha ClimateAg, Verra grouped project | ID **3346**, Punjab–Haryana; **70% of net revenue** to farmers, 5% to channel partner | iSignal investigation, "The communication gap that's plaguing private carbon farming" |
+| Boomitra, Verra grouped project | ID **2889**, UP component under verification; **55% of total revenue** to farmers, 20% to field partner; 12,000+ families, 25,000 acres (**10,117 ha**) | iSignal; Institute for Competitiveness |
+| Grow Indigo — Aadi | India's first agricultural issuance under Verra **VM0042**; **2,550+ farmers paid**, mean **₹11,478** (min ₹3,000, max ₹1,17,985); farmers may take an assured payment or **75% of net carbon revenue**; paid 14 Sep 2026, Ludhiana | Grow Indigo release, 15 Sep 2026 |
+| Sow&Reap Agro | ~**35,000** paddy farmers, **37,405** credits, Gold Standard, Telangana | Institute for Competitiveness |
+| Uttar Pradesh state tree programme | **25,000+** farmers; ~**₹10,000** each as an advance against future credits; ₹48 lakh to 237 farmers in earlier batches | Institute for Competitiveness |
+| EKI Energy Services | Three reforestation / land-management projects in Verra's pipeline, not registered | iSignal |
+| Indian Verra registry context | 377 registered Indian projects, **43 AFOLU**, **4 using VM0042** | iSignal |
+| Credit yield estimate under VM0042 | **1.5–1.7 credits per acre per year** (= 3.71–4.20 / ha); expert estimate, explicitly directional and site-dependent | iSignal |
+| Price quoted for these projects | **US$15–45 / tCO₂e** (≈ ₹1,400–4,300), late 2025 | iSignal |
+| Consent and records risk | 15 farmers interviewed in Hardoi, none aware of the carbon project; at least 10 gram panchayat heads also unaware; credits issued only against documented evidence | iSignal |
+| CCTS offset mechanism | Agriculture is a **Phase 1 sector**; BEE Offset Mechanism Detailed Procedure Version 1, March 2025; project start date **no earlier than 1 Jan 2025** | BEE guidelines, as summarised by Envint |
