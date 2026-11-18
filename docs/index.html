@@ -93,6 +93,34 @@ Even the bear case is roughly a 40× expansion on disclosed enrolment, so read t
 can be bounded from published data; enrolment cannot, because nobody has demonstrated it at
 scale in India. That is where diligence belongs.</p>
 
+<h2>Screening six real programmes broke two of these assumptions</h2>
+<div class="panel flag">
+<table><thead><tr><th>Assumption</th><th class='n'>In this model</th>
+<th class='n'>What operators disclose</th><th>Effect on developer revenue</th></tr></thead><tbody>
+<tr><td>Farmer share of credit revenue</td><td class='n'>50%</td>
+<td class='n'>55% – 75%</td>
+<td><strong>Overstated by 10–50%</strong></td></tr>
+<tr><td>Credit yield, rice methane</td><td class='n'>1.1 t/ha</td>
+<td class='n'>3.71 – 4.20 t/ha</td>
+<td><strong>Understated ~3.4×</strong></td></tr>
+</tbody></table>
+</div>
+<p class="note">Of the six programmes screened, <strong>3 disclose a farmer revenue
+share</strong> — Boomitra 55% of gross, Varaha 70% of net, Grow Indigo 75% of net — and all
+3 sit above the 50% modelled here. Two are promised on <em>net</em> revenue with no
+published cost base, so they cannot be converted to a gross split at all. The yield range
+comes from a published 1.5–1.7 credits-per-acre estimate under VM0042, which is directional
+and site-dependent, so it bounds the assumption rather than replacing it.
+<strong>The two conflicts push in opposite directions</strong>, so neither is a one-line fix:
+the model keeps its sourced assumptions and records the disagreement.</p>
+<p class="note">Not one of the six publishes <em>both</em> hectares and credits issued, which
+is why credits per hectare — the number every sizing of this market rests on — still cannot be
+derived from any disclosed Indian programme. Full screen in the
+<a href="https://github.com/f20220970-debug/india-agri-carbon-market/blob/main/reports/diligence_memo.md">diligence memo</a>;
+tracker and checks in
+<a href="https://github.com/f20220970-debug/india-agri-carbon-market/blob/main/src/diligence.py">diligence.py</a>
+and <a href="https://github.com/f20220970-debug/india-agri-carbon-market/blob/main/tests/test_diligence.py">test_diligence.py</a>.</p>
+
 <h2>Who is already doing this</h2>
 <div class="panel">
 <table><thead><tr><th>Programme</th><th class='n'>Farmers</th><th class='n'>Credits</th>

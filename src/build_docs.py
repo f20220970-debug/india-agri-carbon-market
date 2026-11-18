@@ -7,6 +7,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "src"))
 import market_model as M  # noqa: E402
+import diligence as D  # noqa: E402
 
 OUT = ROOT / "docs" / "index.html"
 
@@ -18,6 +19,15 @@ def main() -> int:
     rm_lo, rm_hi = M.implied_developer_share(rm.credit_yield, rm.price)
     bc_lo, bc_hi = M.implied_developer_share(bc.credit_yield, bc.price)
     bc_cal = M.biochar(developer_share=(bc_lo + bc_hi) / 2)
+
+    sv = D.split_assumption_verdict(1 - rm.developer_share)
+    yv = D.yield_assumption_verdict(rm.credit_yield)
+    split_lo, split_hi = sv["disclosed_farmer_share_low"], sv["disclosed_farmer_share_high"]
+    over_lo = sv["developer_revenue_overstated_low_pct"]
+    over_hi = sv["developer_revenue_overstated_high_pct"]
+    y_lo, y_hi = yv["published_low_t_per_ha"], yv["published_high_t_per_ha"]
+    under = yv["model_understates_by_x"]
+    n_shares = len(D.disclosed_farmer_shares())
 
     scen = []
     for share, label in [(0.01, "bear"), (0.03, "base"), (0.08, "bull")]:
@@ -152,6 +162,34 @@ Even the bear case is roughly a 40× expansion on disclosed enrolment, so read t
 <strong>Enrolment dominates — and it has the least evidence behind it.</strong> Price and yield
 can be bounded from published data; enrolment cannot, because nobody has demonstrated it at
 scale in India. That is where diligence belongs.</p>
+
+<h2>Screening six real programmes broke two of these assumptions</h2>
+<div class="panel flag">
+<table><thead><tr><th>Assumption</th><th class='n'>In this model</th>
+<th class='n'>What operators disclose</th><th>Effect on developer revenue</th></tr></thead><tbody>
+<tr><td>Farmer share of credit revenue</td><td class='n'>50%</td>
+<td class='n'>{split_lo * 100:.0f}% – {split_hi * 100:.0f}%</td>
+<td><strong>Overstated by {over_lo:.0f}–{over_hi:.0f}%</strong></td></tr>
+<tr><td>Credit yield, rice methane</td><td class='n'>{rm.credit_yield} t/ha</td>
+<td class='n'>{y_lo:.2f} – {y_hi:.2f} t/ha</td>
+<td><strong>Understated ~{under:.1f}×</strong></td></tr>
+</tbody></table>
+</div>
+<p class="note">Of the six programmes screened, <strong>{n_shares} disclose a farmer revenue
+share</strong> — Boomitra 55% of gross, Varaha 70% of net, Grow Indigo 75% of net — and all
+{n_shares} sit above the 50% modelled here. Two are promised on <em>net</em> revenue with no
+published cost base, so they cannot be converted to a gross split at all. The yield range
+comes from a published 1.5–1.7 credits-per-acre estimate under VM0042, which is directional
+and site-dependent, so it bounds the assumption rather than replacing it.
+<strong>The two conflicts push in opposite directions</strong>, so neither is a one-line fix:
+the model keeps its sourced assumptions and records the disagreement.</p>
+<p class="note">Not one of the six publishes <em>both</em> hectares and credits issued, which
+is why credits per hectare — the number every sizing of this market rests on — still cannot be
+derived from any disclosed Indian programme. Full screen in the
+<a href="https://github.com/f20220970-debug/india-agri-carbon-market/blob/main/reports/diligence_memo.md">diligence memo</a>;
+tracker and checks in
+<a href="https://github.com/f20220970-debug/india-agri-carbon-market/blob/main/src/diligence.py">diligence.py</a>
+and <a href="https://github.com/f20220970-debug/india-agri-carbon-market/blob/main/tests/test_diligence.py">test_diligence.py</a>.</p>
 
 <h2>Who is already doing this</h2>
 <div class="panel">
