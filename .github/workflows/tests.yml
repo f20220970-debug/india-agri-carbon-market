@@ -1,0 +1,36 @@
+name: tests
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install
+        run: pip install -r requirements.txt
+      - name: Tests
+        run: python -m pytest tests
+      - name: Rebuild the workbook and results page
+        run: |
+          python src/build_workbook.py
+          python src/build_docs.py
+      - name: Check the memo's headline still holds
+        run: |
+          python - <<'PY'
+          import sys; sys.path.insert(0, "src")
+          import market_model as M
+          rm, bc = M.rice_methane(), M.biochar()
+          ratio = (bc.credit_yield * bc.price) / (rm.credit_yield * rm.price)
+          low, _ = M.implied_developer_share(rm.credit_yield, rm.price)
+          assert ratio > 10, "biochar no longer dominates per hectare"
+          assert low < 0, "rice methane can now fund the top of the farmer band"
+          print(f"biochar {ratio:.1f}x per hectare | rice-methane implied "
+                f"developer share floor {low*100:.0f}% -- memo premises hold")
+          PY
